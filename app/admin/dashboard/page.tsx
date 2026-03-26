@@ -30,22 +30,21 @@ export default function AdminDashboard() {
 
   async function fetchStats() {
     try {
-      const [events, team, blog, testimonials, contact, membership] = await Promise.all([
-        fetch('/api/events').then(r => r.json()),
-        fetch('/api/team').then(r => r.json()),
-        fetch('/api/blog').then(r => r.json()),
-        fetch('/api/testimonials').then(r => r.json()),
-        fetch('/api/contact').then(r => r.json()),
-        fetch('/api/membership').then(r => r.json()),
+      const [events, team, blog, testimonials, contact] = await Promise.all([
+        fetch('/api/events').then(r => r.json()).catch(() => []),
+        fetch('/api/team').then(r => r.json()).catch(() => []),
+        fetch('/api/blog').then(r => r.json()).catch(() => []),
+        fetch('/api/testimonials').then(r => r.json()).catch(() => []),
+        fetch('/api/contact').then(r => r.json()).catch(() => []),
       ])
 
       setStats({
-        events: events.length || 0,
-        teamMembers: team.length || 0,
-        blogPosts: blog.length || 0,
-        testimonials: testimonials.length || 0,
-        contactMessages: contact.length || 0,
-        memberships: membership.length || 0,
+        events: Array.isArray(events) ? events.length : 0,
+        teamMembers: Array.isArray(team) ? team.length : 0,
+        blogPosts: Array.isArray(blog) ? blog.length : 0,
+        testimonials: Array.isArray(testimonials) ? testimonials.length : 0,
+        contactMessages: Array.isArray(contact) ? contact.length : 0,
+        memberships: 0,
       })
     } catch (error) {
       console.error('Failed to fetch stats:', error)

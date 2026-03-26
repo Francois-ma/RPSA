@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET single event by ID
 export async function GET(
@@ -7,6 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    await ensureTables()
     const { id } = await params
     const event = await prisma.event.findUnique({
       where: { id },

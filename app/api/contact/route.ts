@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET all contact messages
 export async function GET() {
   try {
+    await ensureTables()
     const messages = await prisma.contactMessage.findMany({
       orderBy: { createdAt: 'desc' },
     })

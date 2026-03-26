@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 import * as bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
   try {
+    await ensureTables()
     const body = await request.json()
     const { email, password } = body
 

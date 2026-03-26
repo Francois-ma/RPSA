@@ -174,5 +174,12 @@ for (const t of testimonials) {
 }
 console.log(`Seeded ${testimonials.length} testimonials.`);
 
+// Seed Admin User
+db.exec(`DELETE FROM "User"`);
+const insertUser = db.prepare(`INSERT INTO "User" ("id", "email", "password", "name", "role", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?, ?, ?)`);
+// Password: admin123 (bcrypt hashed)
+insertUser.run(cuid(), 'admin@rpsa.rw', '$2b$10$ejJW2XgArFEocykRIkBR8uW0b9u1EgC6zZ1AjmYGFI6voZR5x9Vq.', 'Admin', 'admin', now, now);
+console.log('Seeded admin user (admin@rpsa.rw / admin123).');
+
 db.close();
 console.log('Database setup complete!');
