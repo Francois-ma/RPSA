@@ -1,14 +1,34 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { blogPostSchema } from '@/lib/validations'
+import { requireAuth } from '@/lib/auth'
 
-// GET all blog posts
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const posts = await prisma.blogPost.findMany({
-      where: { published: true },
-      orderBy: { date: 'desc' },
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const skip = (page - 1) * limit
+
+    const [posts, total] = await Promise.all([
+      prisma.blogPost.findMany({
+        where: { published: true },
+        orderBy: { date: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.blogPost.count({ where: { published: true } }),
+    ])
+
+    return NextResponse.json({
+      data: posts,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
     })
-    return NextResponse.json(posts)
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to fetch blog posts' },
@@ -17,24 +37,23 @@ export async function GET() {
   }
 }
 
-// POST create new blog post
 export async function POST(request: Request) {
+  const authResult = requireAuth(request)
+  if (authResult instanceof NextResponse) return authResult
+
   try {
     const body = await request.json()
+    const result = blogPostSchema.safeParse(body)
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: result.error.flatten() },
+        { status: 400 }
+      )
+    }
+
     const post = await prisma.blogPost.create({
-      data: {
-        title: body.title,
-        excerpt: body.excerpt,
-        content: body.content,
-        author: body.author,
-        authorImage: body.authorImage,
-        date: body.date,
-        category: body.category,
-        tags: body.tags,
-        image: body.image,
-        readTime: body.readTime,
-        published: body.published !== undefined ? body.published : true,
-      },
+      data: result.data,
     })
     return NextResponse.json(post, { status: 201 })
   } catch (error) {

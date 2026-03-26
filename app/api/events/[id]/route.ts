@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { eventSchema } from '@/lib/validations'
+import { requireAuth } from '@/lib/auth'
 
-// GET single event by ID
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -27,26 +28,27 @@ export async function GET(
   }
 }
 
-// PUT update event
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const authResult = requireAuth(request)
+  if (authResult instanceof NextResponse) return authResult
+
   try {
     const body = await request.json()
+    const result = eventSchema.partial().safeParse(body)
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: result.error.flatten() },
+        { status: 400 }
+      )
+    }
+
     const event = await prisma.event.update({
       where: { id: params.id },
-      data: {
-        title: body.title,
-        date: body.date,
-        time: body.time,
-        location: body.location,
-        category: body.category,
-        image: body.image,
-        description: body.description,
-        attendees: body.attendees,
-        isPast: body.isPast,
-      },
+      data: result.data,
     })
     return NextResponse.json(event)
   } catch (error) {
@@ -57,11 +59,13 @@ export async function PUT(
   }
 }
 
-// DELETE event
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  const authResult = requireAuth(request)
+  if (authResult instanceof NextResponse) return authResult
+
   try {
     await prisma.event.delete({
       where: { id: params.id },

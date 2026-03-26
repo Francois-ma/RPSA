@@ -4,27 +4,28 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model BlogPost {
-  id          String   @id
+  id          String   @id @default(cuid())
   title       String
   excerpt     String
   content     String
   author      String
-  authorImage String
+  authorImage String   @default("")
   date        String
   category    String
-  tags        String
-  image       String
-  readTime    String
+  tags        String   @default("")
+  image       String   @default("")
+  readTime    String   @default("5 min read")
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model ContactMessage {
-  id        String   @id
+  id        String   @id @default(cuid())
   firstName String
   lastName  String
   email     String
@@ -32,26 +33,26 @@ model ContactMessage {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
-  id          String   @id
+  id          String   @id @default(cuid())
   title       String
   date        String
   time        String
   location    String
   category    String
-  image       String
+  image       String   @default("")
   description String
   attendees   Int      @default(0)
   isPast      Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model Membership {
-  id        String   @id
+  id        String   @id @default(cuid())
   firstName String
   lastName  String
   email     String
@@ -59,40 +60,40 @@ model Membership {
   tier      String
   status    String   @default("pending")
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model TeamMember {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   role      String
-  image     String
+  image     String   @default("")
   bio       String
   twitter   String?
   linkedin  String?
   email     String
   order     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Testimonial {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   role      String
-  image     String
+  image     String   @default("")
   quote     String
   order     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model User {
-  id        String   @id
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
   name      String
   role      String   @default("admin")
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
