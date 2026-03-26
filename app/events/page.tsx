@@ -1,18 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Calendar, MapPin, Users, ArrowRight, Search } from "lucide-react";
-import { eventsData } from "@/data/mockData";
+import { eventsData as mockEvents } from "@/data/mockData";
+
+interface Event {
+  id: string | number;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  image: string;
+  description: string;
+  attendees: number;
+  isPast: boolean;
+}
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<Event[]>(mockEvents);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", ...Array.from(new Set(eventsData.map(e => e.category)))];
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const res = await fetch('/api/events');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setEvents(data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch events, using mock data:', error);
+      }
+    }
+    fetchEvents();
+  }, []);
 
-  const filteredEvents = eventsData.filter(event => {
+  const categories = ["All", ...Array.from(new Set(events.map(e => e.category)))];
+
+  const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || event.category === selectedCategory;
     return matchesSearch && matchesCategory;

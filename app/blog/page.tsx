@@ -1,14 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { Calendar, Clock, User, ArrowRight, Search } from "lucide-react";
-import { blogPosts } from "@/data/mockData";
+import { blogPosts as mockBlogPosts } from "@/data/mockData";
+
+interface BlogPost {
+  id: string | number;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  authorImage: string;
+  date: string;
+  category: string;
+  tags: string | string[];
+  image: string;
+  readTime: string;
+}
 
 export default function BlogPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+  useEffect(() => {
+    async function fetchBlogPosts() {
+      try {
+        const res = await fetch('/api/blog');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setBlogPosts(data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch blog posts, using mock data:', error);
+      }
+    }
+    fetchBlogPosts();
+  }, []);
 
   const categories = ["All", ...Array.from(new Set(blogPosts.map(post => post.category)))];
 

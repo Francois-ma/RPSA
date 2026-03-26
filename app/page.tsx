@@ -1,12 +1,65 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Users, Award, TrendingUp, ArrowRight, Star, Sparkles } from "lucide-react";
-import { eventsData, testimonials } from "@/data/mockData";
+import { eventsData as mockEvents, testimonials as mockTestimonials } from "@/data/mockData";
 import { motion } from "motion/react";
 
+interface Event {
+  id: string | number;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  image: string;
+  description: string;
+  attendees: number;
+  isPast: boolean;
+}
+
+interface Testimonial {
+  id: string | number;
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+}
+
 export default function HomePage() {
-  const upcomingEvents = eventsData.filter(e => !e.isPast).slice(0, 3);
+  const [events, setEvents] = useState<Event[]>(mockEvents);
+  const [testimonialsList, setTestimonialsList] = useState<Testimonial[]>(mockTestimonials);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [eventsRes, testimonialsRes] = await Promise.all([
+          fetch('/api/events').catch(() => null),
+          fetch('/api/testimonials').catch(() => null),
+        ]);
+
+        if (eventsRes?.ok) {
+          const eventsData = await eventsRes.json();
+          if (Array.isArray(eventsData) && eventsData.length > 0) {
+            setEvents(eventsData);
+          }
+        }
+
+        if (testimonialsRes?.ok) {
+          const testimonialsData = await testimonialsRes.json();
+          if (Array.isArray(testimonialsData) && testimonialsData.length > 0) {
+            setTestimonialsList(testimonialsData);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch data, using mock data:', error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const upcomingEvents = events.filter(e => !e.isPast).slice(0, 3);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -322,7 +375,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             variants={staggerContainer}
           >
-            {testimonials.map((testimonial) => (
+            {testimonialsList.map((testimonial) => (
               <motion.div 
                 key={testimonial.id} 
                 variants={fadeInUp}

@@ -1,10 +1,38 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Check, Star, Award, Users, BookOpen, Briefcase, GraduationCap, Heart } from "lucide-react";
-import { testimonials } from "@/data/mockData";
+import { testimonials as mockTestimonials } from "@/data/mockData";
+
+interface Testimonial {
+  id: string | number;
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+}
 
 export default function MembershipPage() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(mockTestimonials);
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const res = await fetch('/api/testimonials');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setTestimonials(data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials, using mock data:', error);
+      }
+    }
+    fetchTestimonials();
+  }, []);
+
   const benefits = [
     { icon: BookOpen, title: "Educational Resources", description: "Access to exclusive learning materials and pharmaceutical databases" },
     { icon: Users, title: "Networking", description: "Connect with fellow students and industry leaders" },
