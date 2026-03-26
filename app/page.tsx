@@ -31,8 +31,8 @@ export default function HomePage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    fetch("/api/events").then(r => r.json()).then(setEvents).catch(() => {});
-    fetch("/api/testimonials").then(r => r.json()).then(setTestimonials).catch(() => {});
+    fetch("/api/events").then(r => r.json()).then(data => { if (Array.isArray(data)) setEvents(data); }).catch(() => {});
+    fetch("/api/testimonials").then(r => r.json()).then(data => { if (Array.isArray(data)) setTestimonials(data); }).catch(() => {});
   }, []);
 
   const upcomingEvents = events.filter(e => !e.isPast).slice(0, 3);

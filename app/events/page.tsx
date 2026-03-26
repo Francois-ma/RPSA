@@ -28,7 +28,7 @@ export default function EventsPage() {
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
-        setEvents(data);
+        if (Array.isArray(data)) setEvents(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

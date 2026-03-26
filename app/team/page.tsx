@@ -24,7 +24,7 @@ export default function TeamPage() {
     fetch("/api/team")
       .then((res) => res.json())
       .then((data) => {
-        setTeamMembers(data);
+        if (Array.isArray(data)) setTeamMembers(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

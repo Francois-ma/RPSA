@@ -29,7 +29,7 @@ export default function BlogPage() {
     fetch("/api/blog")
       .then((res) => res.json())
       .then((data) => {
-        setPosts(data);
+        if (Array.isArray(data)) setPosts(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));

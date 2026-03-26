@@ -16,7 +16,7 @@ export default function MembershipPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
-    fetch("/api/testimonials").then(r => r.json()).then(setTestimonials).catch(() => {});
+    fetch("/api/testimonials").then(r => r.json()).then(data => { if (Array.isArray(data)) setTestimonials(data); }).catch(() => {});
   }, []);
   const benefits = [
     { icon: BookOpen, title: "Educational Resources", description: "Access to exclusive learning materials and pharmaceutical databases" },
