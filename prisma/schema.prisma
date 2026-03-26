@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model BlogPost {
+  id          String   @id
+  title       String
+  excerpt     String
+  content     String
+  author      String
+  authorImage String
+  date        String
+  category    String
+  tags        String
+  image       String
+  readTime    String
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model ContactMessage {
+  id        String   @id
+  firstName String
+  lastName  String
+  email     String
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model Event {
+  id          String   @id
+  title       String
+  date        String
+  time        String
+  location    String
+  category    String
+  image       String
+  description String
+  attendees   Int      @default(0)
+  isPast      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model Membership {
+  id        String   @id
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  tier      String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model TeamMember {
+  id        String   @id
+  name      String
+  role      String
+  image     String
+  bio       String
+  twitter   String?
+  linkedin  String?
+  email     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model Testimonial {
+  id        String   @id
+  name      String
+  role      String
+  image     String
+  quote     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model User {
+  id        String   @id
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
