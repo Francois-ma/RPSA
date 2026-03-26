@@ -17,9 +17,9 @@ export function Footer() {
               <Image
                 src="/logo.jpeg"
                 alt="RPSA Logo"
-                width={56}
-                height={56}
-                className="w-14 h-14 object-contain"
+                width={72}
+                height={72}
+                className="w-[72px] h-[72px] object-contain"
               />
               <div>
                 <div className="text-sm font-semibold">Rwanda Pharmaceutical</div>
