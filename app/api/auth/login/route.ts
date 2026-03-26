@@ -1,13 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { ensureTables } from '@/lib/ensureTables'
-import * as bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
   try {
     await ensureTables()
     const body = await request.json()
     const { email, password } = body
+
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: 'Email and password are required' },
+        { status: 400 }
+      )
+    }
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -43,9 +50,11 @@ export async function POST(request: Request) {
         role: user.role,
       },
     })
-  } catch (error) {
+  } catch (error: unknown) {
+    console.error('Login error:', error)
+    const message = error instanceof Error ? error.message : 'Authentication failed'
     return NextResponse.json(
-      { error: 'Authentication failed' },
+      { error: message },
       { status: 500 }
     )
   }
