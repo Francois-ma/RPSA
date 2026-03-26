@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, Phone, Globe } from "lucide-react";
 
 export function Footer() {
@@ -13,9 +14,13 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 via-blue-500 to-green-600 flex items-center justify-center shadow-lg shadow-blue-200/50">
-                <span className="text-lg font-bold text-white">RPSA</span>
-              </div>
+              <Image
+                src="/logo.jpeg"
+                alt="RPSA Logo"
+                width={56}
+                height={56}
+                className="w-14 h-14 object-contain"
+              />
               <div>
                 <div className="text-sm font-semibold">Rwanda Pharmaceutical</div>
                 <div className="text-xs text-gray-400">Student Association</div>

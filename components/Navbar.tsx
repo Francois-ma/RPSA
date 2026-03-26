@@ -46,9 +46,9 @@ export function Navbar() {
             <Image
               src="/logo.jpeg"
               alt="RPSA Logo"
-              width={48}
-              height={48}
-              className="w-12 h-12 object-contain transition-transform duration-300 group-hover:scale-105"
+              width={56}
+              height={56}
+              className="w-14 h-14 object-contain transition-transform duration-300 group-hover:scale-105"
             />
             <div className="hidden md:block">
               <div className="text-sm font-semibold text-gray-900 leading-tight">Rwanda Pharmaceutical</div>
