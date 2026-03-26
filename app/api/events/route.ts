@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET all events
 export async function GET() {
   try {
+    await ensureTables()
     const events = await prisma.event.findMany({
       orderBy: { date: 'desc' },
     })

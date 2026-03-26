@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // Seed the database with real data
 export async function POST() {
   try {
+    // Create tables if they don't exist
+    await ensureTables()
+
     // Clear existing data
     await prisma.teamMember.deleteMany()
     await prisma.event.deleteMany()

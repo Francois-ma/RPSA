@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET all blog posts
 export async function GET() {
   try {
+    await ensureTables()
     const posts = await prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { date: 'desc' },

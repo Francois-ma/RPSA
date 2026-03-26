@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET all team members
 export async function GET() {
   try {
+    await ensureTables()
     const members = await prisma.teamMember.findMany({
       orderBy: { order: 'asc' },
     })

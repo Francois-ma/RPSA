@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { ensureTables } from '@/lib/ensureTables'
 
 // GET all testimonials
 export async function GET() {
   try {
+    await ensureTables()
     const testimonials = await prisma.testimonial.findMany({
       orderBy: { order: 'asc' },
     })
