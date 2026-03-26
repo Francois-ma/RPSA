@@ -101,9 +101,9 @@ export default function AboutPage() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-green-600 -z-10" />
-        <div className="absolute inset-0 -z-[5] overflow-hidden">
+      <section className="relative overflow-hidden pt-12 pb-24 lg:pt-16 lg:pb-32">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-green-600" />
+        <div className="absolute inset-0 overflow-hidden">
           <motion.div
             className="absolute top-10 left-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"
             animate={{ scale: [1, 1.3, 1], x: [0, 40, 0] }}
