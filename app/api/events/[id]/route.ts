@@ -4,11 +4,12 @@ import { prisma } from '@/lib/prisma'
 // GET single event by ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const event = await prisma.event.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!event) {
@@ -30,12 +31,13 @@ export async function GET(
 // PUT update event
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const body = await request.json()
     const event = await prisma.event.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         title: body.title,
         date: body.date,
@@ -60,11 +62,12 @@ export async function PUT(
 // DELETE event
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     await prisma.event.delete({
-      where: { id: params.id },
+      where: { id },
     })
     return NextResponse.json({ message: 'Event deleted successfully' })
   } catch (error) {
