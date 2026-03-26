@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const event = await prisma.event.create({
       data: {
+        id: crypto.randomUUID(),
         title: body.title,
         date: body.date,
         time: body.time,
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
         description: body.description,
         attendees: body.attendees || 0,
         isPast: body.isPast || false,
+        updatedAt: new Date(),
       },
     })
     return NextResponse.json(event, { status: 201 })
