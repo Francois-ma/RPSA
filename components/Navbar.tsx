@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -42,10 +43,13 @@ export function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 via-blue-500 to-green-600 flex items-center justify-center transition-all duration-300 group-hover:scale-105 group-hover:rotate-2 shadow-lg shadow-blue-200/50">
-              <span className="text-xl font-bold text-white">RPSA</span>
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-400 to-green-400 opacity-0 group-hover:opacity-20 transition-opacity blur-xl" />
-            </div>
+            <Image
+              src="/logo.jpeg"
+              alt="RPSA Logo"
+              width={48}
+              height={48}
+              className="w-12 h-12 object-contain transition-transform duration-300 group-hover:scale-105"
+            />
             <div className="hidden md:block">
               <div className="text-sm font-semibold text-gray-900 leading-tight">Rwanda Pharmaceutical</div>
               <div className="text-xs text-gray-600">Student Association</div>
