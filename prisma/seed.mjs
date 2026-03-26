@@ -7,7 +7,7 @@ async function main() {
   console.log('🌱 Seeding database...')
 
   // Create admin user
-  const hashedPassword = await bcrypt.hash('admin123', 10)
+  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'admin123', 10)
   await prisma.user.upsert({
     where: { email: 'admin@rpsa.rw' },
     update: {},
@@ -18,7 +18,7 @@ async function main() {
       role: 'admin',
     },
   })
-  console.log('✅ Admin user created (email: admin@rpsa.rw, password: admin123)')
+  console.log('✅ Admin user created (email: admin@rpsa.rw)')
 
   // Create events
   const events = [
