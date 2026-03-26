@@ -1,13 +1,13 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
+import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcryptjs'
-import path from 'path'
-import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const dbPath = path.join(__dirname, 'dev.db')
-const adapter = new PrismaBetterSqlite3({ url: `file:${dbPath}` })
+const connectionString = process.env.DATABASE_URL
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is required')
+}
+
+const adapter = new PrismaPg({ connectionString })
 const prisma = new PrismaClient({ adapter })
 
 async function main() {
@@ -19,12 +19,10 @@ async function main() {
     where: { email: 'admin@rpsa.rw' },
     update: {},
     create: {
-      id: 'admin-1',
       email: 'admin@rpsa.rw',
       password: hashedPassword,
       name: 'Admin User',
       role: 'admin',
-      updatedAt: new Date(),
     },
   })
   console.log('✅ Admin user created (email: admin@rpsa.rw, password: admin123)')
@@ -32,7 +30,6 @@ async function main() {
   // Create events
   const events = [
     {
-      id: 'event-1',
       title: 'Annual Pharmacy Conference 2026',
       date: '2026-04-15',
       time: '9:00 AM - 5:00 PM',
@@ -42,10 +39,8 @@ async function main() {
       description: 'Join us for our flagship annual conference bringing together pharmacy students, professionals, and industry leaders from across East Africa.',
       attendees: 250,
       isPast: false,
-      updatedAt: new Date(),
     },
     {
-      id: 'event-2',
       title: 'Clinical Pharmacy Workshop',
       date: '2026-03-28',
       time: '2:00 PM - 6:00 PM',
@@ -55,10 +50,8 @@ async function main() {
       description: 'Hands-on clinical pharmacy workshop focusing on patient counseling, medication therapy management, and pharmaceutical care practices.',
       attendees: 80,
       isPast: false,
-      updatedAt: new Date(),
     },
     {
-      id: 'event-3',
       title: 'Health Outreach Program - Musanze',
       date: '2026-03-30',
       time: '8:00 AM - 4:00 PM',
@@ -68,7 +61,6 @@ async function main() {
       description: 'Community health outreach providing free medication counseling, health screenings, and pharmaceutical education to underserved communities.',
       attendees: 45,
       isPast: false,
-      updatedAt: new Date(),
     },
   ]
 
@@ -80,7 +72,6 @@ async function main() {
   // Create team members
   const teamMembers = [
     {
-      id: 'team-1',
       name: 'Emmanuel Habimana',
       role: 'President',
       image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop',
@@ -89,10 +80,8 @@ async function main() {
       linkedin: '#',
       email: 'emmanuel@rpsa.rw',
       order: 1,
-      updatedAt: new Date(),
     },
     {
-      id: 'team-2',
       name: 'Grace Uwase',
       role: 'Vice President',
       image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
@@ -101,7 +90,6 @@ async function main() {
       linkedin: '#',
       email: 'grace@rpsa.rw',
       order: 2,
-      updatedAt: new Date(),
     },
   ]
 
@@ -113,7 +101,6 @@ async function main() {
   // Create blog posts
   const blogPosts = [
     {
-      id: 'blog-1',
       title: 'The Future of Pharmaceutical Care in Rwanda',
       excerpt: 'Exploring emerging trends in pharmacy practice and how students can prepare for the evolving healthcare landscape.',
       content: 'Full article content here...',
@@ -125,7 +112,6 @@ async function main() {
       image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&h=500&fit=crop',
       readTime: '5 min read',
       published: true,
-      updatedAt: new Date(),
     },
   ]
 
@@ -137,13 +123,11 @@ async function main() {
   // Create testimonials
   const testimonials = [
     {
-      id: 'testimonial-1',
       name: 'Alice Mukamana',
       role: '3rd Year Pharmacy Student',
       image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop',
       quote: 'RPSA has been instrumental in my growth as a pharmacy student. The networking opportunities and workshops have prepared me for my future career.',
       order: 1,
-      updatedAt: new Date(),
     },
   ]
 

@@ -46,7 +46,6 @@ export async function PUT(
         description: body.description,
         attendees: body.attendees,
         isPast: body.isPast,
-        updatedAt: new Date(),
       },
     })
     return NextResponse.json(event)

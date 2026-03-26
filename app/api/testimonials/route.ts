@@ -22,13 +22,11 @@ export async function POST(request: Request) {
     const body = await request.json()
     const testimonial = await prisma.testimonial.create({
       data: {
-        id: crypto.randomUUID(),
         name: body.name,
         role: body.role,
         image: body.image,
         quote: body.quote,
         order: body.order || 0,
-        updatedAt: new Date(),
       },
     })
     return NextResponse.json(testimonial, { status: 201 })

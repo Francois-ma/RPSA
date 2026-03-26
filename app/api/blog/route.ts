@@ -23,7 +23,6 @@ export async function POST(request: Request) {
     const body = await request.json()
     const post = await prisma.blogPost.create({
       data: {
-        id: crypto.randomUUID(),
         title: body.title,
         excerpt: body.excerpt,
         content: body.content,
@@ -35,7 +34,6 @@ export async function POST(request: Request) {
         image: body.image,
         readTime: body.readTime,
         published: body.published !== undefined ? body.published : true,
-        updatedAt: new Date(),
       },
     })
     return NextResponse.json(post, { status: 201 })

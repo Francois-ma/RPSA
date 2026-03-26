@@ -22,7 +22,6 @@ export async function POST(request: Request) {
     const body = await request.json()
     const member = await prisma.teamMember.create({
       data: {
-        id: crypto.randomUUID(),
         name: body.name,
         role: body.role,
         image: body.image,
@@ -31,7 +30,6 @@ export async function POST(request: Request) {
         linkedin: body.linkedin,
         email: body.email,
         order: body.order || 0,
-        updatedAt: new Date(),
       },
     })
     return NextResponse.json(member, { status: 201 })

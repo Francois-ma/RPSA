@@ -22,13 +22,11 @@ export async function POST(request: Request) {
     const body = await request.json()
     const membership = await prisma.membership.create({
       data: {
-        id: crypto.randomUUID(),
         firstName: body.firstName,
         lastName: body.lastName,
         email: body.email,
         phone: body.phone || null,
         tier: body.tier,
-        updatedAt: new Date(),
       },
     })
     return NextResponse.json(membership, { status: 201 })
