@@ -1,10 +1,51 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { teamMembers } from "@/data/mockData";
+import { teamMembers as mockTeamMembers } from "@/data/mockData";
 import { Mail, Globe, Send } from "lucide-react";
 
+interface TeamMember {
+  id: string | number;
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  twitter?: string;
+  linkedin?: string;
+  email?: string;
+  socials?: { twitter: string; linkedin: string; email: string };
+}
+
 export default function TeamPage() {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(mockTeamMembers as TeamMember[]);
+
+  useEffect(() => {
+    async function fetchTeam() {
+      try {
+        const res = await fetch('/api/team');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            // Map API data to include socials for backwards compatibility with the template
+            const mapped = data.map((m: TeamMember) => ({
+              ...m,
+              socials: m.socials || {
+                twitter: m.twitter || '#',
+                linkedin: m.linkedin || '#',
+                email: m.email || '',
+              },
+            }));
+            setTeamMembers(mapped as TeamMember[]);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch team members, using mock data:', error);
+      }
+    }
+    fetchTeam();
+  }, []);
+
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
@@ -48,13 +89,13 @@ export default function TeamPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
                     <div className="flex gap-3">
-                      <a href={member.socials.twitter} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-400 transition-colors">
+                      <a href={member.socials?.twitter || member.twitter || '#'} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-400 transition-colors">
                         <Send className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
-                      <a href={member.socials.linkedin} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                      <a href={member.socials?.linkedin || member.linkedin || '#'} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
                         <Globe className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
-                      <a href={`mailto:${member.socials.email}`} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                      <a href={`mailto:${member.socials?.email || member.email || ''}`} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
                         <Mail className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
                     </div>
