@@ -1,18 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Calendar, MapPin, Users, ArrowRight, Search } from "lucide-react";
-import { eventsData } from "@/data/mockData";
+import { Calendar, MapPin, Users, ArrowRight, Search, Loader2 } from "lucide-react";
+
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  image: string;
+  description: string;
+  attendees: number;
+  isPast: boolean;
+}
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", ...Array.from(new Set(eventsData.map(e => e.category)))];
+  useEffect(() => {
+    fetch("/api/events")
+      .then((res) => res.json())
+      .then((data) => {
+        setEvents(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
-  const filteredEvents = eventsData.filter(event => {
+  const categories = ["All", ...Array.from(new Set(events.map(e => e.category)))];
+
+  const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || event.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -76,7 +100,11 @@ export default function EventsPage() {
       {/* Events Grid */}
       <section className="py-20">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          {filteredEvents.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+          ) : filteredEvents.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg">No events found matching your criteria</p>
             </div>

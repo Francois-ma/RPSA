@@ -1,12 +1,41 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Users, Award, TrendingUp, ArrowRight, Star, Sparkles } from "lucide-react";
-import { eventsData, testimonials } from "@/data/mockData";
 import { motion } from "motion/react";
 
+interface Event {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  image: string;
+  description: string;
+  attendees: number;
+  isPast: boolean;
+}
+
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+}
+
 export default function HomePage() {
-  const upcomingEvents = eventsData.filter(e => !e.isPast).slice(0, 3);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    fetch("/api/events").then(r => r.json()).then(setEvents).catch(() => {});
+    fetch("/api/testimonials").then(r => r.json()).then(setTestimonials).catch(() => {});
+  }, []);
+
+  const upcomingEvents = events.filter(e => !e.isPast).slice(0, 3);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },

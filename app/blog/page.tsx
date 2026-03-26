@@ -1,18 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Calendar, Clock, User, ArrowRight, Search } from "lucide-react";
-import { blogPosts } from "@/data/mockData";
+import { Calendar, Clock, User, ArrowRight, Search, Loader2 } from "lucide-react";
+
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  authorImage: string;
+  date: string;
+  category: string;
+  tags: string;
+  image: string;
+  readTime: string;
+}
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const categories = ["All", ...Array.from(new Set(blogPosts.map(post => post.category)))];
+  useEffect(() => {
+    fetch("/api/blog")
+      .then((res) => res.json())
+      .then((data) => {
+        setPosts(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
-  const filteredPosts = blogPosts.filter(post => {
+  const categories = ["All", ...Array.from(new Set(posts.map(post => post.category)))];
+
+  const filteredPosts = posts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
@@ -77,7 +102,11 @@ export default function BlogPage() {
       {/* Blog Grid */}
       <section className="py-20">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-          {filteredPosts.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+          ) : filteredPosts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg">No articles found matching your criteria</p>
             </div>

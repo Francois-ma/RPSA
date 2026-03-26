@@ -1,10 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { teamMembers } from "@/data/mockData";
-import { Mail, Globe, Send } from "lucide-react";
+import { Mail, Globe, Send, Loader2 } from "lucide-react";
+
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  bio: string;
+  twitter?: string;
+  linkedin?: string;
+  email: string;
+  order: number;
+}
 
 export default function TeamPage() {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/team")
+      .then((res) => res.json())
+      .then((data) => {
+        setTeamMembers(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
@@ -30,6 +55,15 @@ export default function TeamPage() {
       {/* Team Grid */}
       <section className="py-20">
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            </div>
+          ) : teamMembers.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-gray-500 text-lg">No team members found</p>
+            </div>
+          ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {teamMembers.map((member, index) => (
               <motion.div
@@ -48,13 +82,17 @@ export default function TeamPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
                     <div className="flex gap-3">
-                      <a href={member.socials.twitter} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-400 transition-colors">
+                      {member.twitter && (
+                      <a href={member.twitter} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-400 transition-colors">
                         <Send className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
-                      <a href={member.socials.linkedin} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                      )}
+                      {member.linkedin && (
+                      <a href={member.linkedin} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
                         <Globe className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
-                      <a href={`mailto:${member.socials.email}`} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
+                      )}
+                      <a href={`mailto:${member.email}`} className="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-green-600 transition-colors">
                         <Mail className="w-5 h-5 text-gray-700 hover:text-white" />
                       </a>
                     </div>
@@ -68,6 +106,7 @@ export default function TeamPage() {
               </motion.div>
             ))}
           </div>
+          )}
         </div>
       </section>
     </div>

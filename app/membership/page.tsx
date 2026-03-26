@@ -1,10 +1,23 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Check, Star, Award, Users, BookOpen, Briefcase, GraduationCap, Heart } from "lucide-react";
-import { testimonials } from "@/data/mockData";
+
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
+}
 
 export default function MembershipPage() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+    fetch("/api/testimonials").then(r => r.json()).then(setTestimonials).catch(() => {});
+  }, []);
   const benefits = [
     { icon: BookOpen, title: "Educational Resources", description: "Access to exclusive learning materials and pharmaceutical databases" },
     { icon: Users, title: "Networking", description: "Connect with fellow students and industry leaders" },
