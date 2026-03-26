@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { PrismaClient } from '@prisma/client'
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3'
-import path from 'path'
+import { getDbPath } from './ensureTables'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-function createPrismaClient() {
-  const dbPath = path.join(process.cwd(), 'prisma', 'dev.db')
+export function createPrismaClient() {
+  const dbPath = getDbPath()
   const adapter = new PrismaBetterSqlite3({
     url: `file:${dbPath}`,
   })
@@ -18,6 +18,12 @@ function createPrismaClient() {
   })
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient()
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Use a getter so Prisma client is created lazily (after ensureTables copies DB)
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient()
+    }
+    return (globalForPrisma.prisma as unknown as Record<string | symbol, unknown>)[prop]
+  }
+})
