@@ -7,7 +7,7 @@ datasource db {
 }
 
 model BlogPost {
-  id          String   @id
+  id          String   @id @default(cuid())
   title       String
   excerpt     String
   content     String
@@ -20,11 +20,11 @@ model BlogPost {
   readTime    String
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model ContactMessage {
-  id        String   @id
+  id        String   @id @default(cuid())
   firstName String
   lastName  String
   email     String
@@ -32,11 +32,11 @@ model ContactMessage {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
-  id          String   @id
+  id          String   @id @default(cuid())
   title       String
   date        String
   time        String
@@ -47,11 +47,11 @@ model Event {
   attendees   Int      @default(0)
   isPast      Boolean  @default(false)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
 }
 
 model Membership {
-  id        String   @id
+  id        String   @id @default(cuid())
   firstName String
   lastName  String
   email     String
@@ -59,11 +59,11 @@ model Membership {
   tier      String
   status    String   @default("pending")
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model TeamMember {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   role      String
   image     String
@@ -73,26 +73,26 @@ model TeamMember {
   email     String
   order     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Testimonial {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   role      String
   image     String
   quote     String
   order     Int      @default(0)
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model User {
-  id        String   @id
+  id        String   @id @default(cuid())
   email     String   @unique
   password  String
   name      String
   role      String   @default("admin")
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
 }
