@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import ImageUpload from '@/components/ImageUpload'
 
 interface BlogPost {
   id: string
@@ -130,16 +131,11 @@ export default function AdminBlog() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Content *</label>
                   <textarea name="content" required rows={6} value={formData.content} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Author *</label>
-                    <input name="author" required value={formData.author} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Author Image URL</label>
-                    <input name="authorImage" value={formData.authorImage} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Author *</label>
+                  <input name="author" required value={formData.author} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
                 </div>
+                <ImageUpload label="Author Photo" value={formData.authorImage} onChange={(url) => setFormData({ ...formData, authorImage: url })} />
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
@@ -160,10 +156,7 @@ export default function AdminBlog() {
                     <input name="readTime" value={formData.readTime} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                  <input name="image" value={formData.image} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="https://..." />
-                </div>
+                <ImageUpload label="Cover Image" value={formData.image} onChange={(url) => setFormData({ ...formData, image: url })} />
                 <div className="flex items-center gap-2">
                   <input name="published" type="checkbox" checked={formData.published} onChange={handleChange} className="w-4 h-4 rounded" />
                   <label className="text-sm text-gray-700">Published</label>

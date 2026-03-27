@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import ImageUpload from '@/components/ImageUpload'
 
 interface Testimonial {
   id: string
@@ -120,10 +121,7 @@ export default function AdminTestimonials() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Testimonial Content *</label>
                   <textarea name="content" required rows={4} value={formData.content} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-                  <input name="image" value={formData.image} onChange={handleChange} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="https://..." />
-                </div>
+                <ImageUpload label="Photo" value={formData.image} onChange={(url) => setFormData({ ...formData, image: url })} />
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Rating (1-5)</label>
