@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 
 // GET single event by ID
 export async function GET(
@@ -8,13 +7,14 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await ensureTables()
     const { id } = await params
-    const event = await prisma.event.findUnique({
-      where: { id },
-    })
+    const { data: event, error } = await supabase
+      .from('Event')
+      .select('*')
+      .eq('id', id)
+      .single()
 
-    if (!event) {
+    if (error || !event) {
       return NextResponse.json(
         { error: 'Event not found' },
         { status: 404 }
@@ -38,9 +38,9 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const event = await prisma.event.update({
-      where: { id },
-      data: {
+    const { data: event, error } = await supabase
+      .from('Event')
+      .update({
         title: body.title,
         date: body.date,
         time: body.time,
@@ -50,8 +50,11 @@ export async function PUT(
         description: body.description,
         attendees: body.attendees,
         isPast: body.isPast,
-      },
-    })
+      })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
     return NextResponse.json(event)
   } catch (error) {
     return NextResponse.json(
@@ -68,9 +71,8 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    await prisma.event.delete({
-      where: { id },
-    })
+    const { error } = await supabase.from('Event').delete().eq('id', id)
+    if (error) throw error
     return NextResponse.json({ message: 'Event deleted successfully' })
   } catch (error) {
     return NextResponse.json(

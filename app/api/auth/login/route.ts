@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 import bcrypt from 'bcryptjs'
 
 export async function POST(request: Request) {
   try {
-    await ensureTables()
     const body = await request.json()
     const { email, password } = body
 
@@ -17,11 +15,13 @@ export async function POST(request: Request) {
     }
 
     // Find user
-    const user = await prisma.user.findUnique({
-      where: { email },
-    })
+    const { data: user, error } = await supabase
+      .from('User')
+      .select('*')
+      .eq('email', email)
+      .single()
 
-    if (!user) {
+    if (error || !user) {
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }

@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 
 // GET all team members
 export async function GET() {
   try {
-    await ensureTables()
-    const members = await prisma.teamMember.findMany({
-      orderBy: { order: 'asc' },
-    })
+    const { data: members, error } = await supabase
+      .from('TeamMember')
+      .select('*')
+      .order('order', { ascending: true })
+    if (error) throw error
     return NextResponse.json(members)
   } catch (error) {
     return NextResponse.json(
@@ -22,8 +22,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const member = await prisma.teamMember.create({
-      data: {
+    const { data: member, error } = await supabase
+      .from('TeamMember')
+      .insert({
         name: body.name,
         role: body.role,
         image: body.image,
@@ -32,8 +33,10 @@ export async function POST(request: Request) {
         linkedin: body.linkedin,
         email: body.email,
         order: body.order || 0,
-      },
-    })
+      })
+      .select()
+      .single()
+    if (error) throw error
     return NextResponse.json(member, { status: 201 })
   } catch (error) {
     return NextResponse.json(

@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 
 // GET all blog posts
 export async function GET() {
   try {
-    await ensureTables()
-    const posts = await prisma.blogPost.findMany({
-      where: { published: true },
-      orderBy: { date: 'desc' },
-    })
+    const { data: posts, error } = await supabase
+      .from('BlogPost')
+      .select('*')
+      .eq('published', true)
+      .order('date', { ascending: false })
+    if (error) throw error
     return NextResponse.json(posts)
   } catch (error) {
     return NextResponse.json(
@@ -23,8 +23,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const post = await prisma.blogPost.create({
-      data: {
+    const { data: post, error } = await supabase
+      .from('BlogPost')
+      .insert({
         title: body.title,
         excerpt: body.excerpt,
         content: body.content,
@@ -36,8 +37,10 @@ export async function POST(request: Request) {
         image: body.image,
         readTime: body.readTime,
         published: body.published !== undefined ? body.published : true,
-      },
-    })
+      })
+      .select()
+      .single()
+    if (error) throw error
     return NextResponse.json(post, { status: 201 })
   } catch (error) {
     return NextResponse.json(

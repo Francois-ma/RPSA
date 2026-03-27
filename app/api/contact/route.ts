@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 
 // GET all contact messages
 export async function GET() {
   try {
-    await ensureTables()
-    const messages = await prisma.contactMessage.findMany({
-      orderBy: { createdAt: 'desc' },
-    })
+    const { data: messages, error } = await supabase
+      .from('ContactMessage')
+      .select('*')
+      .order('createdAt', { ascending: false })
+    if (error) throw error
     return NextResponse.json(messages)
   } catch (error) {
     return NextResponse.json(
@@ -22,15 +22,18 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const message = await prisma.contactMessage.create({
-      data: {
+    const { data: message, error } = await supabase
+      .from('ContactMessage')
+      .insert({
         firstName: body.firstName,
         lastName: body.lastName,
         email: body.email,
         subject: body.subject,
         message: body.message,
-      },
-    })
+      })
+      .select()
+      .single()
+    if (error) throw error
     return NextResponse.json(message, { status: 201 })
   } catch (error) {
     return NextResponse.json(

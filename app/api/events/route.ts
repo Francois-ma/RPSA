@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { ensureTables } from '@/lib/ensureTables'
+import { supabase } from '@/lib/supabase'
 
 // GET all events
 export async function GET() {
   try {
-    await ensureTables()
-    const events = await prisma.event.findMany({
-      orderBy: { date: 'desc' },
-    })
+    const { data: events, error } = await supabase
+      .from('Event')
+      .select('*')
+      .order('date', { ascending: false })
+    if (error) throw error
     return NextResponse.json(events)
   } catch (error) {
     return NextResponse.json(
@@ -22,8 +22,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const event = await prisma.event.create({
-      data: {
+    const { data: event, error } = await supabase
+      .from('Event')
+      .insert({
         title: body.title,
         date: body.date,
         time: body.time,
@@ -33,8 +34,10 @@ export async function POST(request: Request) {
         description: body.description,
         attendees: body.attendees || 0,
         isPast: body.isPast || false,
-      },
-    })
+      })
+      .select()
+      .single()
+    if (error) throw error
     return NextResponse.json(event, { status: 201 })
   } catch (error) {
     return NextResponse.json(
