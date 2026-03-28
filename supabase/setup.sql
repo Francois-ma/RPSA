@@ -90,13 +90,14 @@ CREATE TABLE IF NOT EXISTS "Testimonial" (
   "updatedAt" timestamptz DEFAULT now()
 );
 
--- Users (admin)
+-- Users (admin + members)
 CREATE TABLE IF NOT EXISTS "User" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "email" text UNIQUE NOT NULL,
   "password" text NOT NULL,
   "name" text NOT NULL,
-  "role" text DEFAULT 'admin',
+  "role" text DEFAULT 'member',
+  "yearOfStudy" text,
   "createdAt" timestamptz DEFAULT now(),
   "updatedAt" timestamptz DEFAULT now()
 );

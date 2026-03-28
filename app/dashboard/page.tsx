@@ -1,9 +1,81 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { Calendar, Users, Award, TrendingUp, Clock, CheckCircle, BookOpen, MessageSquare } from "lucide-react";
+import Link from "next/link";
+import {
+  Calendar,
+  Users,
+  Award,
+  Clock,
+  CheckCircle,
+  BookOpen,
+  MessageSquare,
+  LogOut,
+  GraduationCap,
+} from "lucide-react";
+
+interface UserData {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  yearOfStudy?: string;
+}
 
 export default function DashboardPage() {
+  const [user, setUser] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    const userData = localStorage.getItem("user");
+
+    if (!token || !userData) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(userData));
+    } catch {
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("user");
+      router.push("/login");
+    }
+
+    setLoading(false);
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
+
+  const getInitials = (name: string) =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+
+  if (loading) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
   const stats = [
     { icon: Calendar, label: "Events Registered", value: "12", color: "from-blue-500 to-blue-600" },
     { icon: Award, label: "Certificates Earned", value: "5", color: "from-green-500 to-green-600" },
@@ -30,13 +102,30 @@ export default function DashboardPage() {
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold mb-2">Welcome back, Emmanuel!</h1>
-              <p className="text-blue-100">Here's what's happening with your account</p>
+              <h1 className="text-4xl font-bold mb-2">Welcome back, {user.name.split(" ")[0]}!</h1>
+              <p className="text-blue-100">Here&apos;s what&apos;s happening with your account</p>
+              {user.yearOfStudy && (
+                <div className="flex items-center gap-2 mt-2 text-blue-100">
+                  <GraduationCap className="w-4 h-4" />
+                  <span className="text-sm">{user.yearOfStudy}</span>
+                </div>
+              )}
             </div>
             <div className="hidden md:flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <span className="text-2xl font-bold">EH</span>
+              <div className="text-right mr-3">
+                <div className="text-sm font-medium">{user.name}</div>
+                <div className="text-xs text-blue-200">{user.email}</div>
               </div>
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                <span className="text-2xl font-bold">{getInitials(user.name)}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="ml-2 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                title="Sign out"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
@@ -187,6 +276,17 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </motion.div>
+
+              {/* Mobile Logout */}
+              <div className="md:hidden">
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-3 bg-red-50 text-red-700 rounded-xl hover:bg-red-100 transition-colors font-medium flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </button>
+              </div>
             </div>
           </div>
         </div>

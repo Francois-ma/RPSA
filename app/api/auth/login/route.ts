@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     }
 
     // Create a simple token (in production use JWT or NextAuth.js)
-    const token = `admin_${user.id}_${Date.now()}`
+    const token = `${user.role}_${user.id}_${Date.now()}`
 
     return NextResponse.json({
       token,
@@ -48,6 +48,7 @@ export async function POST(request: Request) {
         email: user.email,
         name: user.name,
         role: user.role,
+        yearOfStudy: user.yearOfStudy || null,
       },
     })
   } catch (error: unknown) {

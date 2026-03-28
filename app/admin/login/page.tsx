@@ -27,6 +27,8 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json()
         localStorage.setItem('adminToken', data.token)
+        localStorage.setItem('userToken', data.token)
+        localStorage.setItem('user', JSON.stringify(data.user))
         router.push('/admin/dashboard')
       } else {
         const errorData = await response.json()
