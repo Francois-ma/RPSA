@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -21,7 +21,7 @@ import {
   Play,
   CheckCircle,
 } from "lucide-react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
 
 interface Event {
   id: string;
@@ -100,6 +100,18 @@ function AnimatedCounter({
 }
 
 export default function HomePage() {
+  const heroImages = ["/home1.jpeg", "/home2.jpeg", "/FDADG.jpeg"];
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const nextImage = useCallback(() => {
+    setCurrentImage((prev) => (prev + 1) % heroImages.length);
+  }, [heroImages.length]);
+
+  useEffect(() => {
+    const interval = setInterval(nextImage, 5000);
+    return () => clearInterval(interval);
+  }, [nextImage]);
+
   const [events, setEvents] = useState<Event[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -140,10 +152,43 @@ export default function HomePage() {
     <div className="bg-white">
       {/* ━━━━━━━ HERO ━━━━━━━ */}
       <section className="relative min-h-[92vh] flex items-center overflow-hidden">
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900" />
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1920&q=80')] bg-cover bg-center opacity-20" />
+        {/* Rotating background images */}
+        <div className="absolute inset-0 bg-slate-900" />
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={currentImage}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          >
+            <img
+              src={heroImages[currentImage]}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Overlays for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/70 via-blue-950/60 to-slate-900/70" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-slate-900/40" />
+
+        {/* Image indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {heroImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentImage(i)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === currentImage
+                  ? "w-8 bg-white"
+                  : "w-3 bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`Show image ${i + 1}`}
+            />
+          ))}
+        </div>
 
         {/* Animated shapes */}
         <motion.div
