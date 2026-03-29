@@ -83,7 +83,7 @@ export function Navbar() {
             />
             <div className="hidden md:block">
               <div className="text-sm font-semibold text-gray-900 leading-tight">Rwanda Pharmaceutical</div>
-              <div className="text-xs text-gray-600">Student Association</div>
+              <div className="text-xs text-gray-600">Students Association</div>
             </div>
           </Link>
 

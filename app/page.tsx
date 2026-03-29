@@ -212,7 +212,7 @@ export default function HomePage() {
             >
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               <span className="text-sm text-blue-100 font-medium tracking-wide">
-                Empowering Future Pharmacists Since 2010
+                Empowering Future Pharmacists Since 1999
               </span>
             </motion.div>
 
