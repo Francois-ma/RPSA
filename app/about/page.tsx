@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Heart,
   Award,
@@ -15,7 +16,20 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+const heroImages = ["/about1.jpeg", "/about2.jpeg", "/about3.jpeg"];
+
 export default function AboutPage() {
+  const [currentImage, setCurrentImage] = useState(0);
+
+  const nextImage = useCallback(() => {
+    setCurrentImage((prev) => (prev + 1) % heroImages.length);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(nextImage, 5000);
+    return () => clearInterval(interval);
+  }, [nextImage]);
+
   const values = [
     {
       icon: Heart,
@@ -102,18 +116,53 @@ export default function AboutPage() {
     <div className="bg-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-24 lg:pt-16 lg:pb-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-green-600" />
+        {/* Rotating background images */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={currentImage}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          >
+            <img
+              src={heroImages[currentImage]}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-green-900/80" />
+        <div className="absolute inset-0 bg-black/30" />
+        {/* Animated decorative blurs */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
-            className="absolute top-10 left-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            className="absolute top-10 left-10 w-96 h-96 bg-white/5 rounded-full blur-3xl"
             animate={{ scale: [1, 1.3, 1], x: [0, 40, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
           <motion.div
-            className="absolute bottom-10 right-10 w-80 h-80 bg-green-300/10 rounded-full blur-3xl"
+            className="absolute bottom-10 right-10 w-80 h-80 bg-green-300/5 rounded-full blur-3xl"
             animate={{ scale: [1, 1.2, 1], y: [0, -30, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           />
+        </div>
+        {/* Image indicators */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {heroImages.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentImage(i)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                i === currentImage
+                  ? "w-8 bg-white"
+                  : "w-3 bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`Show image ${i + 1}`}
+            />
+          ))}
         </div>
 
         <div className="max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10">
