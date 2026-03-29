@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     // Create a simple token (in production use JWT or NextAuth.js)
     const token = `${user.role}_${user.id}_${Date.now()}`
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       token,
       user: {
         id: user.id,
@@ -51,6 +51,28 @@ export async function POST(request: Request) {
         yearOfStudy: user.yearOfStudy || null,
       },
     })
+
+    // Set auth cookie for server-side route protection
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
+
+    // Set admin cookie if user is admin
+    if (user.role === 'admin') {
+      response.cookies.set('admin-token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    }
+
+    return response
   } catch (error: unknown) {
     console.error('Login error:', error)
     const message = error instanceof Error ? error.message : 'Authentication failed'

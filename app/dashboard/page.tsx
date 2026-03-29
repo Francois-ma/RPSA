@@ -49,7 +49,8 @@ export default function DashboardPage() {
     setLoading(false);
   }, [router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
     localStorage.removeItem("userToken");
     localStorage.removeItem("user");
     router.push("/login");

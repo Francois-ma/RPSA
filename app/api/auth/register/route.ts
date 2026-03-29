@@ -73,7 +73,7 @@ export async function POST(request: Request) {
     // Create a simple token
     const token = `user_${newUser.id}_${Date.now()}`
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       message: 'Account created successfully',
       token,
       user: {
@@ -84,6 +84,17 @@ export async function POST(request: Request) {
         yearOfStudy: newUser.yearOfStudy,
       },
     }, { status: 201 })
+
+    // Set auth cookie for server-side route protection
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    })
+
+    return response
   } catch (error: unknown) {
     console.error('Registration error:', error)
     const message = error instanceof Error ? error.message : 'Registration failed'
