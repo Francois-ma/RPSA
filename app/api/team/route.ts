@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 // GET all team members
 export async function GET() {
   try {
-    const { data: members, error } = await supabase
+    const { data: members, error } = await supabase()
       .from('TeamMember')
       .select('*')
       .order('order', { ascending: true })
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { data: member, error } = await supabase
+    const { data: member, error } = await supabase()
       .from('TeamMember')
       .insert({
         name: body.name,

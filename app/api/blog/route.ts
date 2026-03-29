@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 // GET all blog posts
 export async function GET() {
   try {
-    const { data: posts, error } = await supabase
+    const { data: posts, error } = await supabase()
       .from('BlogPost')
       .select('*')
       .eq('published', true)
@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { data: post, error } = await supabase
+    const { data: post, error } = await supabase()
       .from('BlogPost')
       .insert({
         title: body.title,

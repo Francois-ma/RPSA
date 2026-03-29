@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
 
     // Find user
-    const { data: user, error } = await supabase
+    const { data: user, error } = await supabase()
       .from('User')
       .select('*')
       .eq('email', email)

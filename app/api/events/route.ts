@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 // GET all events
 export async function GET() {
   try {
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabase()
       .from('Event')
       .select('*')
       .order('date', { ascending: false })
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { data: event, error } = await supabase
+    const { data: event, error } = await supabase()
       .from('Event')
       .insert({
         title: body.title,

@@ -6,11 +6,11 @@ import bcrypt from 'bcryptjs'
 export async function POST() {
   try {
     // Clear existing data
-    await supabase.from('TeamMember').delete().not('id', 'is', null)
-    await supabase.from('Event').delete().not('id', 'is', null)
-    await supabase.from('BlogPost').delete().not('id', 'is', null)
-    await supabase.from('Testimonial').delete().not('id', 'is', null)
-    await supabase.from('User').delete().not('id', 'is', null)
+    await supabase().from('TeamMember').delete().not('id', 'is', null)
+    await supabase().from('Event').delete().not('id', 'is', null)
+    await supabase().from('BlogPost').delete().not('id', 'is', null)
+    await supabase().from('Testimonial').delete().not('id', 'is', null)
+    await supabase().from('User').delete().not('id', 'is', null)
 
     // Seed Team Members
     const teamMembers = [
@@ -23,7 +23,7 @@ export async function POST() {
       { name: "Fabrice Ishimwe", role: "Communications Lead", image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&h=400&fit=crop", bio: "Managing social media and member communications", twitter: "#", linkedin: "#", email: "fabrice@rpsa.rw", order: 7 },
       { name: "Isaie Hakizimana", role: "Academic Affairs", image: "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=400&h=400&fit=crop", bio: "Supporting academic excellence and student success", twitter: "#", linkedin: "#", email: "isaie@rpsa.rw", order: 8 },
     ]
-    const { error: teamErr } = await supabase.from('TeamMember').insert(teamMembers)
+    const { error: teamErr } = await supabase().from('TeamMember').insert(teamMembers)
     if (teamErr) throw teamErr
 
     // Seed Events
@@ -33,7 +33,7 @@ export async function POST() {
       { title: "Health Outreach Program - Musanze", date: "2026-03-30", time: "8:00 AM - 4:00 PM", location: "Musanze District", category: "Outreach", image: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&h=500&fit=crop", description: "Community health outreach providing free medication counseling and health screenings.", attendees: 45, isPast: false },
       { title: "Pharmaceutical Research Symposium", date: "2026-02-20", time: "10:00 AM - 3:00 PM", location: "University of Rwanda", category: "Symposium", image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&h=500&fit=crop", description: "Student-led research presentations showcasing innovative pharmaceutical studies.", attendees: 120, isPast: true },
     ]
-    const { error: eventErr } = await supabase.from('Event').insert(events)
+    const { error: eventErr } = await supabase().from('Event').insert(events)
     if (eventErr) throw eventErr
 
     // Seed Blog Posts
@@ -45,7 +45,7 @@ export async function POST() {
       { title: "Partnership Announcement: Global Pharmacy Network", excerpt: "RPSA joins international network connecting pharmacy students worldwide.", content: "We are thrilled to announce RPSA membership in the Global Pharmacy Student Network.", author: "Elite Tuyizere Ahanyuze", authorImage: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=200&h=200&fit=crop", date: "2026-02-22", category: "Partnerships", tags: "Partnership,International,Network", image: "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&h=500&fit=crop", readTime: "5 min read", published: true },
       { title: "Career Guide: Opportunities in Clinical Pharmacy", excerpt: "Exploring diverse career paths in clinical pharmacy.", content: "Clinical pharmacy offers a wide range of career opportunities from hospital settings to community pharmacies.", author: "Pacifique Ahishakiye", authorImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop", date: "2026-02-18", category: "Career", tags: "Career,Clinical Pharmacy,Opportunities", image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=500&fit=crop", readTime: "8 min read", published: true },
     ]
-    const { error: blogErr } = await supabase.from('BlogPost').insert(blogPosts)
+    const { error: blogErr } = await supabase().from('BlogPost').insert(blogPosts)
     if (blogErr) throw blogErr
 
     // Seed Testimonials
@@ -54,12 +54,12 @@ export async function POST() {
       { name: "Patrick Uwizeyimana", role: "Recent Graduate", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop", quote: "The professional development programs and mentorship I received through RPSA helped me land my dream job at a leading hospital.", order: 2 },
       { name: "Diane Ingabire", role: "2nd Year Pharmacy Student", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop", quote: "Being part of RPSA's community outreach programs has shown me the real impact pharmacists can have on people's lives.", order: 3 },
     ]
-    const { error: testErr } = await supabase.from('Testimonial').insert(testimonialsList)
+    const { error: testErr } = await supabase().from('Testimonial').insert(testimonialsList)
     if (testErr) throw testErr
 
     // Seed Admin User (password: admin123)
     const hashedPassword = await bcrypt.hash('admin123', 10)
-    const { error: userErr } = await supabase.from('User').insert({
+    const { error: userErr } = await supabase().from('User').insert({
       email: 'admin@rpsa.rw',
       password: hashedPassword,
       name: 'Admin',
@@ -68,10 +68,10 @@ export async function POST() {
     if (userErr) throw userErr
 
     // Get counts
-    const { count: teamCount } = await supabase.from('TeamMember').select('*', { count: 'exact', head: true })
-    const { count: eventCount } = await supabase.from('Event').select('*', { count: 'exact', head: true })
-    const { count: blogCount } = await supabase.from('BlogPost').select('*', { count: 'exact', head: true })
-    const { count: testCount } = await supabase.from('Testimonial').select('*', { count: 'exact', head: true })
+    const { count: teamCount } = await supabase().from('TeamMember').select('*', { count: 'exact', head: true })
+    const { count: eventCount } = await supabase().from('Event').select('*', { count: 'exact', head: true })
+    const { count: blogCount } = await supabase().from('BlogPost').select('*', { count: 'exact', head: true })
+    const { count: testCount } = await supabase().from('Testimonial').select('*', { count: 'exact', head: true })
 
     return NextResponse.json({
       message: 'Database seeded successfully!',

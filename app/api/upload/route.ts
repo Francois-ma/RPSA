@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase().storage
       .from('uploads')
       .upload(uniqueName, buffer, {
         contentType: file.type,
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     if (uploadError) throw uploadError
 
     // Get the public URL
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = supabase().storage
       .from('uploads')
       .getPublicUrl(uniqueName)
 

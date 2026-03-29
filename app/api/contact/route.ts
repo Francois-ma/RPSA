@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase'
 // GET all contact messages
 export async function GET() {
   try {
-    const { data: messages, error } = await supabase
+    const { data: messages, error } = await supabase()
       .from('ContactMessage')
       .select('*')
       .order('createdAt', { ascending: false })
@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { data: message, error } = await supabase
+    const { data: message, error } = await supabase()
       .from('ContactMessage')
       .insert({
         firstName: body.firstName,

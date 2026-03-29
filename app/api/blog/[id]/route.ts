@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const { data: post, error } = await supabase
+    const { data: post, error } = await supabase()
       .from('BlogPost')
       .select('*')
       .eq('id', id)
@@ -28,7 +28,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { data: post, error } = await supabase
+    const { data: post, error } = await supabase()
       .from('BlogPost')
       .update({
         title: body.title,
@@ -60,7 +60,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const { error } = await supabase.from('BlogPost').delete().eq('id', id)
+    const { error } = await supabase().from('BlogPost').delete().eq('id', id)
     if (error) throw error
     return NextResponse.json({ message: 'Blog post deleted' })
   } catch (error) {

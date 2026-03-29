@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const { data: testimonial, error } = await supabase
+    const { data: testimonial, error } = await supabase()
       .from('Testimonial')
       .select('*')
       .eq('id', id)
@@ -28,7 +28,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { data: testimonial, error } = await supabase
+    const { data: testimonial, error } = await supabase()
       .from('Testimonial')
       .update({
         name: body.name,
@@ -54,7 +54,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const { error } = await supabase.from('Testimonial').delete().eq('id', id)
+    const { error } = await supabase().from('Testimonial').delete().eq('id', id)
     if (error) throw error
     return NextResponse.json({ message: 'Testimonial deleted' })
   } catch (error) {

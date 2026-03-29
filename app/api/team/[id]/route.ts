@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params
-    const { data: member, error } = await supabase
+    const { data: member, error } = await supabase()
       .from('TeamMember')
       .select('*')
       .eq('id', id)
@@ -28,7 +28,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { data: member, error } = await supabase
+    const { data: member, error } = await supabase()
       .from('TeamMember')
       .update({
         name: body.name,
@@ -57,7 +57,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
-    const { error } = await supabase.from('TeamMember').delete().eq('id', id)
+    const { error } = await supabase().from('TeamMember').delete().eq('id', id)
     if (error) throw error
     return NextResponse.json({ message: 'Team member deleted' })
   } catch (error) {
